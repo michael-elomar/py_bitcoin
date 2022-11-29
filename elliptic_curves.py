@@ -1,12 +1,12 @@
 class Point:
-    def __init__(self, x, y, a, b):
+    def __init__(self, x, y, a, b, _tol=1e-12):
         self.x = x
         self.y = y
         self.a = a
         self.b = b
         if self.x is None and self.y is None:
             return
-        if self.y**2 != self.x**3 + self.a*self.x + b:
+        if self.y**2 - (self.x**3 + self.a*self.x + b) > _tol:
             error_msg = f'Point ({self.x},{self.y}) is not on the elliptic curve'
             error_msg = f'{error_msg} defined by y^2 = x^3 + a*x + b'
             raise ValueError(error_msg)

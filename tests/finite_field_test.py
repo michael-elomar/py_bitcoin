@@ -44,30 +44,39 @@ class FiniteFieldTest(GenericTest):
         d = FieldElement(17, 19)
         cd = FieldElement(3, 19)
 
-        self.assertEqual(a*b, ab)
-        self.assertEqual(c*d, cd)
+        self.assertEqual(a * b, ab)
+        self.assertEqual(c * d, cd)
 
         self.logger.info("Multiply test passed")
 
     def test_pow(self):
         a = FieldElement(7, 19)
         a3 = FieldElement(1, 19)
-        self.assertEqual(a**3, a3)
+        self.assertEqual(a ** 3, a3)
 
         b = FieldElement(9, 19)
         b12 = FieldElement(7, 19)
-        self.assertEqual(b**12, b12)
+        self.assertEqual(b ** 12, b12)
 
         self.logger.info("Power test passed")
 
     def test_negative_pow(self):
         a = FieldElement(7, 19)
-        inv_a = a**(-1)
-        inv_a2 = a**(-2)
-        self.assertEqual(a*inv_a, FieldElement(1, 19))
+        inv_a = a ** (-1)
+        inv_a2 = a ** (-2)
+        self.assertEqual(a * inv_a, FieldElement(1, 19))
 
-        self.assertEqual(a*inv_a2*a, FieldElement(1, 19))
+        self.assertEqual(a * inv_a2 * a, FieldElement(1, 19))
         self.logger.info("Negative Power test passed")
+
+    def test_comparison(self):
+        a = FieldElement(12, 25)
+        b = FieldElement(13, 25)
+        other = 12
+        self.assertLessEqual(a, b)
+        self.assertLess(other, b)
+        self.assertGreater(b, other)
+        self.logger.info("Comparison test passed")
 
 
 if __name__ == '__main__':

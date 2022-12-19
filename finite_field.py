@@ -53,3 +53,51 @@ class FieldElement(object):
             raise ValueError('Cannot divide field elements with different primes')
         other = other ** (self.prime - 1)
         return self * other
+
+    def __lt__(self, other):
+        if type(other) is float or type(other) is int:
+            if other >= self.prime or other < 0:
+                raise ValueError('other does not belong to the Field')
+            return self.num < other
+        elif type(other) is FieldElement:
+            if self.prime != other.prime:
+                raise ValueError("Cannot compare two elements of different finite field")
+            return self.num < other.num
+        else:
+            raise TypeError("Cannot compare non numerical types")
+
+    def __gt__(self, other):
+        if type(other) is float or type(other) is int:
+            if other >= self.prime or other < 0:
+                raise ValueError('other does not belong to the Field')
+            return self.num > other
+        elif type(other) is FieldElement:
+            if self.prime != other.prime:
+                raise ValueError("Cannot compare two elements of different finite field")
+            return self.num > other.num
+        else:
+            raise TypeError("Cannot compare non numerical types")
+
+    def __ge__(self, other):
+        if type(other) is float or type(other) is int:
+            if other >= self.prime or other < 0:
+                raise ValueError('other does not belong to the Field')
+            return self.num >= other
+        elif type(other) is FieldElement:
+            if self.prime != other.prime:
+                raise ValueError("Cannot compare two elements of different finite field")
+            return self.num >= other.num
+        else:
+            raise TypeError("Cannot compare non numerical types")
+
+    def __le__(self, other):
+        if type(other) is float or type(other) is int:
+            if other >= self.prime or other < 0:
+                raise ValueError('other does not belong to the Field')
+            return self.num <= other
+        elif type(other) is FieldElement:
+            if self.prime != other.prime:
+                raise ValueError("Cannot compare two elements of different finite field")
+            return self.num <= other.num
+        else:
+            raise TypeError("Cannot compare non numerical types")

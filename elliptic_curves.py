@@ -6,13 +6,16 @@ class Point:
         self.b = b
         if self.x is None and self.y is None:
             return
-        if self.y**2 - (self.x**3 + self.a*self.x + b) > _tol:
+        if self.y**2 - (self.x**3 + self.a*self.x + self.b) > _tol:
             error_msg = f'Point ({self.x},{self.y}) is not on the elliptic curve'
             error_msg = f'{error_msg} defined by y^2 = x^3 + a*x + b'
             raise ValueError(error_msg)
 
+    def _is_on_curve(self, a, b, _tol=1e-12):
+        return self.y**2 - (self.x**3 + a*self.x + b) <= _tol
+
     def __repr__(self):
-        return f"Point_[{self.a},{self.b}]({self.x}, {self.y})"
+        return f"Point_[{self.a.num},{self.b.num}]({self.x}, {self.y})"
 
     def _same_curve(self, other):
         return self.a == other.a and self.b == other.b

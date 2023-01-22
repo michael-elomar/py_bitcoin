@@ -51,7 +51,7 @@ class FieldElement(object):
             raise ValueError("Cannot divide by a None")
         if other.prime != self.prime:
             raise ValueError('Cannot divide field elements with different primes')
-        other = other ** (self.prime - 1)
+        other = other ** (other.prime - 2)
         return self * other
 
     def __lt__(self, other):

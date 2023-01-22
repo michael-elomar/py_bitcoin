@@ -1,4 +1,4 @@
-from generic_test import GenericTest
+from tests.generic_test import GenericTest
 from finite_field import FieldElement
 import unittest
 
@@ -77,6 +77,17 @@ class FiniteFieldTest(GenericTest):
         self.assertLess(other, b)
         self.assertGreater(b, other)
         self.logger.info("Comparison test passed")
+
+    def test_true_div(self):
+        a = FieldElement(2, 19)
+        b = FieldElement(7, 19)
+        c = FieldElement(3, 19)
+        d = FieldElement(5, 19)
+        e = FieldElement(9, 19)
+        self.assertEqual(a / b, c)
+        self.assertEqual(b / d, e)
+
+        self.logger.info("True division test passed")
 
 
 if __name__ == '__main__':

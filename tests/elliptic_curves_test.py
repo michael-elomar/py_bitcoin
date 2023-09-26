@@ -1,6 +1,6 @@
 from tests.generic_test import GenericTest
-from elliptic_curves import Point
-from finite_field import FieldElement
+from bitcoin import Point, FieldElement
+
 import unittest
 
 

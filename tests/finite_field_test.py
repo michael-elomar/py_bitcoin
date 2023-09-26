@@ -1,7 +1,6 @@
 from tests.generic_test import GenericTest
-from finite_field import FieldElement
+from bitcoin import FieldElement
 import unittest
-
 
 class FiniteFieldTest(GenericTest):
     def __init__(self, *args, **kwargs):

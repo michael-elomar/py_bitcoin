@@ -202,6 +202,10 @@ class Point:
 
 
 class S256Point(Point):
+    """
+    S256Point class inherits from Point class.
+    It represents the secp256k1
+    """
     A = 0
     B = 7
     N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
@@ -228,6 +232,20 @@ class S256Point(Point):
         return self.__mul__(other)
 
     def verify(self, z, sig):
+        """
+        Verify the validity of the given signature
+        Given the signature, and the hash of the message being signed,
+        Calculate u, v, and then R = uG + vP.
+        if R.x == sig.r, then the signature is valid.
+
+        Args:
+            z (int): 256bit number
+            sig (Signature): an instance of the class Signature.
+
+        Returns:
+            bool: a boolean describing the validity of the signature.
+        """
+
         s_inv = pow(sig.s, self.N - 2, self.N)
         u = z * s_inv % self.N
         v = sig.r * s_inv % self.N
@@ -246,6 +264,8 @@ class Signature:
 
 class PrivateKey:
     def __init__(self, secret_key=None):
+        if secret_key is None:
+            secret_key = 0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798
         self.secret_key = secret_key
 
     def pub_key(self):
@@ -261,6 +281,12 @@ class PrivateKey:
         return Signature(r, s)
 
     def deterministic_k(self, z):
+        """
+        Deterministic k such that the value of k is unique to the private key
+        and the message being signed to make sure the same value of k is never used twice
+        for the same private key. If the same k is used twice to sign different messages,
+        then the private key can easily be extracted.
+        """
         k = b'\x00' * 32
         v = b'\x01' * 32
         if z > S256Point.N:

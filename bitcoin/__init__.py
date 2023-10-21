@@ -1,6 +1,6 @@
 import hashlib
 import hmac
-
+from bitcoin.utils import hash160, encode_base58, encode_base58_checksum
 
 class FieldElement(object):
     def __init__(self, num: int, prime: int):
@@ -308,6 +308,20 @@ class S256Point(Point):
         else:
             return S256Point(x, odd_beta)
 
+    def hash160(self, compressed=True):
+        return hash160(self.sec(compressed=compressed))
+
+    def address(self, compressed=True, testnet=False):
+        """
+        Returns the address string
+        """
+        h160 = self.hash160(compressed)
+        if testnet:
+            prefix = b"\x6f"
+        else:
+            prefix = b"\x00"
+        return encode_base58_checksum(prefix + h160)
+
 class Signature:
     def __init__(self, r, s):
         self.r = r
@@ -330,7 +344,7 @@ class Signature:
         # if rbin has a high bit, add a \x00
         if rbin[0] & 0x80:
             rbin = b"\x00" + rbin
-        result = bytes([2, len(rbin)]) + rbin
+        result = bytes([0x02, len(rbin)]) + rbin
 
         # remove all null bytes at the beginning
         sbin = self.s.to_bytes(32, byteorder="big")
@@ -339,7 +353,7 @@ class Signature:
         # if sbin has a high bit, add a \x00
         if sbin[0] & 0x80:
             sbin = b"\x00" + sbin
-        result += bytes([2, len(sbin)]) + sbin
+        result += bytes([0x02, len(sbin)]) + sbin
 
         return bytes([0x30, len(result)]) + result
 
@@ -356,18 +370,18 @@ class Signature:
         """
         der_bin = der_bin.lstrip(b"\x30")
         length = der_bin[0]
-        der_bin = der_bin.lstrip(length.to_bytes(2))
+        der_bin = der_bin.lstrip(length.to_bytes(2, byteorder="little"))
 
         der_bin = der_bin.lstrip(b"\x02")
         r_length = der_bin[0]
-        der_bin = der_bin.lstrip(r_length.to_bytes(2))
+        der_bin = der_bin.lstrip(r_length.to_bytes(2, byteorder="big"))
         r = der_bin[:r_length]
         der_bin = der_bin.lstrip(r)
         r = r.lstrip(b"\x00")
 
         der_bin = der_bin.lstrip(b"\x02")
         s_length = der_bin[0]
-        der_bin = der_bin.lstrip(s_length.to_bytes(2))
+        der_bin = der_bin.lstrip(s_length.to_bytes(2, byteorder="big"))
         s = der_bin[:s_length]
         der_bin = der_bin.lstrip(s)
         s = s.lstrip(b"\x00")
@@ -422,3 +436,18 @@ class PrivateKey:
                 return candidate
             k = hmac.new(k, v + b"\x00", s256).digest()
             v = hmac.new(k, v, s256).digest()
+
+    def address(self, compressed=True, testnet=False):
+        return self.pub_key.address(compressed=compressed, testnet=testnet)
+
+    def wif(self, compressed=True, testnet=False):
+        if testnet:
+            prefix = b"\xef"
+        else:
+            prefix = b"\x80"
+        secret_bytes = self.secret_key.to_bytes(length=32, byteorder="big")
+        if compressed:
+            suffix = b"\x01"
+        else:
+            suffix = b""
+        return encode_base58_checksum(prefix + secret_bytes + suffix)
